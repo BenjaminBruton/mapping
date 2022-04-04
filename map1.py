@@ -22,19 +22,22 @@ Height: %s m"""
 
 map = folium.Map(location=[31.557903, -97.127392], zoom_start=5, tiles = "Stamen Terrain")
 
-fg = folium.FeatureGroup(name="My Map")
+fgv = folium.FeatureGroup(name="Volcanoes")
 
 for lt, ln, el, name in zip(lat, lon, elev, name):
     # fg.add_child(folium.Marker(location=[lt, ln], popup=str(el)+" m", icon=folium.Icon(color='green')))
     iframe = folium.IFrame(html=html % (name, name, el), width=200, height=100)
-    fg.add_child(folium.CircleMarker(location=[lt, ln], radius=6, fill_color=color_producer(el), color= "grey",
+    fgv.add_child(folium.CircleMarker(location=[lt, ln], radius=6, fill_color=color_producer(el), color= "grey",
         fill_opacity=0.8, popup=folium.Popup(iframe)))
-
-fg.add_child(folium.GeoJson(data=open('world.json', 'r', encoding='utf-8-sig').read(),
-style_function = lambda x: {'fillColor': 'green' if x['properties']['POP2005'] < 10000000
-else 'orange' if 1000000 <= x['properties']['POP2005'] < 2000000 else 'red'}))
     
-map.add_child(fg)
+fgp = folium.FeatureGroup(name="Population")
 
+fgp.add_child(folium.GeoJson(data=open('world.json', 'r', encoding='utf-8-sig').read(),
+style_function = lambda x: {'fillColor': 'green' if x['properties']['POP2005'] < 10000000
+else 'orange' if 100000000 <= x['properties']['POP2005'] < 100000000 else 'red'}))
+    
+map.add_child(fgv)
+map.add_child(fgp)
+map.add_child(folium.LayerControl())
 
 map.save("Map1.html")
